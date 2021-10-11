@@ -1,16 +1,22 @@
 import React from 'react';
+import { AddAction } from './AddAction';
 
-import { AddAction } from 'datagraph/dist/examples/refactor2/AddAction';
-import { Dispatch } from 'datagraph/dist/examples/refactor2/Dispatch';
+import { ChildProps } from './connect';
+import { ResetAction } from './ResetAction';
 
-interface Props {
-  value: number;
-  queueDispatch: Dispatch;
-}
+type Props = ChildProps<
+  number,
+  & AddAction.KeyValue
+  & ResetAction.KeyValue
+>;
 
 export class App extends React.Component<Props> {
   add = () => {
     this.props.queueDispatch(AddAction.create());
+  };
+
+  reset = () => {
+    this.props.queueDispatch(ResetAction.create());
   };
 
   render() {
@@ -18,6 +24,10 @@ export class App extends React.Component<Props> {
       <div>
         <div>
           <button onClick={this.add}>Add</button>
+        </div>
+
+        <div>
+          <button onClick={this.reset}>Reset</button>
         </div>
         <p>
           Hello, World { this.props.value }
