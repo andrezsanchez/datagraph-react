@@ -15,13 +15,14 @@ type X3Props = {
   b: number;
 }
 
-const K = 50000;
+const K = 10000;
 
 const X3 = createFunctionalNode(
   (props: X3Props) => props.a + props.b,
   {
     valueChangeSideEffects: ({ queueDispatch, value }) => {
       if (value > 20 && value < K) {
+        console.log('Queue AddAction');
         queueDispatch(AddAction.create());
       }
 
@@ -32,22 +33,8 @@ const X3 = createFunctionalNode(
   },
 );
 
-type ComponentARefMap = {
-  x3: ND<UnknownProps, number, UnknownActions, {}>;
-}
-
-const ComponentA = createContainerNode<{ b: number}, number, ComponentARefMap>((props) => {
-  const x3 = createND(X3, { a: 9, b: props.b });
-  return {
-    nodeSet: new Set<GND>([x3]),
-    outputNode: x3,
-    refs: { x3 },
-  }
-});
-
 type RefMap = {
   x3: ND<UnknownProps, number, UnknownActions, {}>;
-  componentA: ND<UnknownProps, number, UnknownActions, ComponentARefMap>;
 }
 
 export const RootNode = createContainerNode<{}, number, RefMap>(() => {
@@ -55,12 +42,10 @@ export const RootNode = createContainerNode<{}, number, RefMap>(() => {
   const x2 = createND(X2, { value: root });
   const x3 = createND(X3, { a: x2, b: root });
 
-  const componentA = createND(ComponentA, { b: root });
-
-  const refs: RefMap = { x3, componentA };
+  const refs: RefMap = { x3 };
 
   return {
-    nodeSet: new Set<GND>([root, x2, x3, componentA]),
+    nodeSet: new Set<GND>([root, x2, x3]),
     outputNode: x3,
     refs,
   };

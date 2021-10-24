@@ -13,7 +13,7 @@ graph.mountNodes(new Set([rootNode]));
 export class Root extends React.Component {
   render() {
     return connect(App, graph, rootNode, (root, refs) => {
-      return refs(root).componentA;
+      return refs(root).x3;
     });
   }
 }

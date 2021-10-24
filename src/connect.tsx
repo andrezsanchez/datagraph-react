@@ -79,9 +79,7 @@ export function connect<V, A extends Actions<A>, R extends RefMap<R>, RV>(
       }
   
       context.graph.addSideEffects(nd, (value) => {
-        setTimeout(() => {
-          this.setState({ value });
-        });
+        this.setState({ value });
       });
 
       const instance = context.graph.resolveInstance(nd);
