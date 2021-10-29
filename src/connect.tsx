@@ -51,11 +51,13 @@ export function connect<V, A extends Actions<A>, R extends RefMap<R>, RV>(
       function refs<V2, T extends RefMap<T>>(nd: ND<UnknownProps, V2, UnknownActions, T>): RefMap<T> {
         const refMap = rootGraph.getRefMap(nd);
         if (!refMap) throw new Error('Resolution error');
-        
+
         const context = contextMap.get(nd);
         if (!context) throw new Error('Invalid node descriptor');
 
-        const graph = (context.graph.resolveInstance(nd as GND) as any)?.dg;
+        // We don't yet have a way to reference the graphs on ContainerNode, so we cast to `any`
+        // and hope that dg is what we assume it is.
+        const graph = (context.graph.resolveInstance(nd) as any)?.dg;
         for (const childNd of Object.values(refMap)) {
           contextMap.set(
             childNd as GND,

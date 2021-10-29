@@ -1,52 +1,54 @@
-import { ExampleNode } from './ExampleNode';
 import { UnknownActions } from 'datagraph/dist/examples/refactor2/Actions';
 import { UnknownProps } from 'datagraph/dist/examples/refactor2/Props';
 import { createND, GND, ND } from 'datagraph/dist/examples/refactor2/NodeDescriptor';
-import { createFunctionalNode } from 'datagraph/dist/examples/refactor2/FunctionalNode';
-import { AddAction } from 'datagraph/dist/examples/refactor2/AddAction';
 import { createContainerNode } from 'datagraph/dist/examples/refactor2/ContainerNode';
+import { createStateMachineNode } from 'datagraph/dist/examples/refactor2/StateMachineNode';
+import { AddEntryAction, SetInputAction } from './Actions';
 
-const X2 = createFunctionalNode(
-  (props: { value: number }): number => props.value / 2,
-);
-
-type X3Props = {
-  a: number;
-  b: number;
+export type FormState = {
+  list: string[];
+  input: string;
 }
 
-const K = 10000;
-
-const X3 = createFunctionalNode(
-  (props: X3Props) => props.a + props.b,
-  {
-    valueChangeSideEffects: ({ queueDispatch, value }) => {
-      if (value > 20 && value < K) {
-        console.log('Queue AddAction');
-        queueDispatch(AddAction.create());
-      }
-
-      if (value > K) {
-        console.log('done');
-      }
-    },
+export const FormNode = createStateMachineNode<FormState, {}>({
+  initialValue: {
+    list: ['what'],
+    input: '1234',
   },
-);
+  actionHandlers: {
+    ...AddEntryAction.handler((state) => {
+      // If there's no input, do nothing.
+      if (state.input.length === 0) {
+        return state;
+      }
 
-type RefMap = {
-  x3: ND<UnknownProps, number, UnknownActions, {}>;
+      // Append the current input to the list and clear the input.
+      return {
+        list: [...state.list, state.input],
+        input: '',
+      };
+    }),
+
+    ...SetInputAction.handler((state, action) => {
+      // Just assign the input and leave the list alone.
+      return {
+        list: state.list,
+        input: action.payload,
+      };
+    }),
+  }
+});
+
+export type RefMap = {
+  form: ND<UnknownProps, FormState, UnknownActions, {}>;
 }
 
-export const RootNode = createContainerNode<{}, number, RefMap>(() => {
-  const root = createND(ExampleNode, { x: 5 });
-  const x2 = createND(X2, { value: root });
-  const x3 = createND(X3, { a: x2, b: root });
-
-  const refs: RefMap = { x3 };
+export const RootNode = createContainerNode<{}, null, RefMap>(() => {
+  const form = createND(FormNode, { x: 5 });
 
   return {
-    nodeSet: new Set<GND>([root, x2, x3]),
-    outputNode: x3,
-    refs,
+    nodeSet: new Set<GND>([form]),
+    outputNode: null,
+    refs: { form },
   };
 });

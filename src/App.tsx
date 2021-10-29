@@ -1,37 +1,43 @@
-import React from 'react';
-import { AddAction } from './AddAction';
-
+import React, { FormEventHandler, ChangeEvent } from 'react';
 import { ChildProps } from './connect';
-import { ResetAction } from './ResetAction';
+
+import { AddEntryAction, SetInputAction } from './Actions';
+import { FormState } from './RootNode';
 
 type Props = ChildProps<
-  number,
-  & AddAction.KeyValue
-  & ResetAction.KeyValue
+  FormState,
+  & AddEntryAction.KeyValue
+  & SetInputAction.KeyValue
 >;
 
 export class App extends React.Component<Props> {
-  add = () => {
-    this.props.queueDispatch(AddAction.create());
+  onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    this.props.queueDispatch(SetInputAction.create(event.target.value));
   };
 
-  reset = () => {
-    this.props.queueDispatch(ResetAction.create());
-  };
+  onFormSubmit: FormEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault();
+    this.props.queueDispatch(AddEntryAction.create());
+  }
 
   render() {
+    const list = this.props.value.list.map((value, index) => (
+      <div key={`${index}__${value}`}>
+        <input type="checkbox" checked={true} readOnly /> {value}
+      </div>
+    ));
+
     return (
       <div>
         <div>
-          <button onClick={this.add}>Add</button>
+          {list}
         </div>
-
         <div>
-          <button onClick={this.reset}>Reset</button>
+          <form onSubmit={this.onFormSubmit}>
+            <input type="text" onChange={this.onInputChange} value={this.props.value.input} />
+            <button type="submit">Submit</button>
+          </form>
         </div>
-        <p>
-          Hello, World { this.props.value }
-        </p>
       </div>
     );
   }

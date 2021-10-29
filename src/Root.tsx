@@ -1,19 +1,33 @@
 import React from 'react';
-import { createND } from 'datagraph/dist/examples/refactor2/NodeDescriptor';
-import { RootDataGraph } from 'datagraph/dist/examples/refactor2/RootDataGraph';
 import { App } from './App';
 import { connect } from './connect';
-import { RootNode } from './RootNode';
 
-const rootNode = createND(RootNode, {});
+import { RefMap } from './RootNode';
+import { RootDataGraph } from 'datagraph/dist/examples/refactor2/RootDataGraph';
+import { ND } from 'datagraph/dist/examples/refactor2/NodeDescriptor';
+import { UnknownProps } from 'datagraph/dist/examples/refactor2/Props';
 
-const graph = new RootDataGraph();
-graph.mountNodes(new Set([rootNode]));
+interface Props {
+  graph: RootDataGraph;
+  rootNode: ND<UnknownProps, null, {}, RefMap>;
+}
 
-export class Root extends React.Component {
+export class Root extends React.Component<Props> {
   render() {
-    return connect(App, graph, rootNode, (root, refs) => {
-      return refs(root).x3;
-    });
+    const app = connect(
+      App,
+      this.props.graph,
+      this.props.rootNode,
+      (root, refs) => refs(root).form,
+    );
+
+    return (
+      <div>
+        <h1>To do:</h1>
+        <div>
+          {app}
+        </div>
+      </div>
+    );
   }
 }
