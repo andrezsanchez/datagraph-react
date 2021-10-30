@@ -86,6 +86,10 @@ export type ConnectProps<V, R extends RefMap<R>> = {
 export class Connect<V, R extends RefMap<R>> extends React.Component<ConnectProps<V, R>, { value: V }> {
   private nodeContext: NodeContext<V, R>;
 
+  sideEffects = (value: V) => {
+    this.setState({ value });
+  }
+
   constructor(props: ConnectProps<V, R>) {
     super(props);
 
@@ -93,15 +97,13 @@ export class Connect<V, R extends RefMap<R>> extends React.Component<ConnectProp
       value: props.node.graph.resolve(props.node.nd),
     };
 
-    // TODO: add a `removeSideEffects` call.
-    props.node.graph.addSideEffects(props.node.nd, (value) => {
-      this.setState({ value });
-    });
-
-    const instance = props.node.graph.resolveInstance(props.node.nd);
-    if (!instance) throw new Error('Resolution error');
+    props.node.graph.addSideEffects(props.node.nd, this.sideEffects);
 
     this.nodeContext = props.node;
+  }
+
+  componentWillUnmount() {
+    this.props.node.graph.removeSideEffects(this.props.node.nd, this.sideEffects);
   }
 
   render() {
