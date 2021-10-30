@@ -1,7 +1,3 @@
-import { UnknownActions } from 'datagraph/dist/examples/refactor2/Actions';
-import { UnknownProps } from 'datagraph/dist/examples/refactor2/Props';
-import { createND, GND, ND } from 'datagraph/dist/examples/refactor2/NodeDescriptor';
-import { createContainerNode } from 'datagraph/dist/examples/refactor2/ContainerNode';
 import { createStateMachineNode } from 'datagraph/dist/examples/refactor2/StateMachineNode';
 import { AddEntryAction, SetInputAction } from './Actions';
 
@@ -37,18 +33,4 @@ export const FormNode = createStateMachineNode<FormState, {}>({
       };
     }),
   }
-});
-
-export type RefMap = {
-  form: ND<UnknownProps, FormState, UnknownActions, {}>;
-}
-
-export const RootNode = createContainerNode<{}, null, RefMap>(() => {
-  const form = createND(FormNode, { x: 5 });
-
-  return {
-    nodeSet: new Set<GND>([form]),
-    outputNode: null,
-    refs: { form },
-  };
 });

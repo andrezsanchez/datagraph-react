@@ -1,104 +1,115 @@
 import React from 'react';
 
 import { IDataGraph } from 'datagraph/dist/examples/refactor2/IDataGraph';
-import { Actions, UnknownActions } from 'datagraph/dist/examples/refactor2/Actions';
+import { UnknownActions } from 'datagraph/dist/examples/refactor2/Actions';
 import { UnknownRefMap } from 'datagraph/dist/examples/refactor2/RefMap';
-import { ActionMap } from 'datagraph/dist/src/StateMachineNode';
 import { RefMap } from 'datagraph/dist/examples/refactor2/RefMap';
 import { UnknownProps } from 'datagraph/dist/examples/refactor2/Props';
 import { GND, ND } from 'datagraph/dist/examples/refactor2/NodeDescriptor';
 import { Dispatch } from 'datagraph/dist/examples/refactor2/Dispatch';
 
-type MyDispatch<A> = (action: ActionMap<A>[keyof A]) => void;
-
-export interface ConnectProps<V> {
+export interface ConnectComponentProps<V, R extends RefMap<R>> {
   value: V;
+  node: NodeContext<V, R>
 }
 
-export interface ChildProps<V, A> {
-  value: V;
-  queueDispatch: MyDispatch<A>;
-}
-
-export function connect<V, A extends Actions<A>, R extends RefMap<R>, RV>(
-  Child: React.ComponentType<ChildProps<V, A>>,
-  rootGraph: IDataGraph,
-  rootND: ND<UnknownProps, RV, UnknownActions, R>,
+export type Select<RootV, RootR extends RefMap<RootR>> = <V, R extends RefMap<R>>(
   getND: (
-    node: ND<UnknownProps, RV, UnknownActions, R>,
-    refs: <V2, T extends RefMap<T>>(nd: ND<UnknownProps, V2, UnknownActions, T>) => RefMap<T>,
-  ) => ND<UnknownProps, V, UnknownActions, UnknownRefMap>,
+    root: ND<UnknownProps, RootV, UnknownActions, RootR>,
+    refs: <NodeV, NodeR extends RefMap<NodeR>>(nd: ND<UnknownProps, NodeV, UnknownActions, NodeR>) => RefMap<NodeR>,
+  ) => ND<UnknownProps, V, UnknownActions, R>,
+) => NodeContext<V, R>;
+
+export type NodeContext<V, R extends RefMap<R>> = {
+  queueDispatch: Dispatch;
+  graph: IDataGraph;
+  nd: ND<UnknownProps, V, UnknownActions, UnknownRefMap>;
+  select: Select<V, R>;
+};
+
+export function createSelect<RootV, RootR extends RefMap<RootR>>(
+  graph: IDataGraph,
+  nd: ND<UnknownProps, RootV, UnknownActions, RootR>,
 ) {
-  class Connect extends React.Component<{}, { value: V }> {
-    private queueDispatch: Dispatch;
+  return <V, R extends RefMap<R>>(
+    getND: (
+      root: typeof nd,
+      refs: <NodeV, NodeR extends RefMap<NodeR>>(nd: ND<UnknownProps, NodeV, UnknownActions, NodeR>) => RefMap<NodeR>,
+    ) => ND<UnknownProps, V, UnknownActions, R>,
+  ): NodeContext<V, R> => {
+    const contextMap = new Map<GND, NodeContext<unknown, UnknownRefMap>>();
 
-    constructor(props: {}) {
-      super(props);
+    contextMap.set(
+      nd,
+      {
+        queueDispatch: graph.queueDispatch,
+        graph,
+        nd,
+        select: createSelect(graph, nd),
+      },
+    );
 
-      const contextMap = new Map<GND, {
-        queueDispatch: Dispatch,
-        graph: IDataGraph,
-      }>();
-
-      contextMap.set(
-        rootND,
-        {
-          queueDispatch: rootGraph.queueDispatch,
-          graph: rootGraph,
-        },
-      );
-
-      function refs<V2, T extends RefMap<T>>(nd: ND<UnknownProps, V2, UnknownActions, T>): RefMap<T> {
-        const refMap = rootGraph.getRefMap(nd);
-        if (!refMap) throw new Error('Resolution error');
-
-        const context = contextMap.get(nd);
-        if (!context) throw new Error('Invalid node descriptor');
-
-        // We don't yet have a way to reference the graphs on ContainerNode, so we cast to `any`
-        // and hope that dg is what we assume it is.
-        const graph = (context.graph.resolveInstance(nd) as any)?.dg;
-        for (const childNd of Object.values(refMap)) {
-          contextMap.set(
-            childNd as GND,
-            {
-              queueDispatch: graph.queueDispatch,
-              graph,
-            },
-          );
-        }
-
-        return refMap;
-      }
-
-      const nd = getND(rootND, refs);
+    function refs<V2, T extends RefMap<T>>(nd: ND<UnknownProps, V2, UnknownActions, T>): RefMap<T> {
+      const refMap = graph.getRefMap(nd);
+      if (!refMap) throw new Error('Resolution error');
 
       const context = contextMap.get(nd);
       if (!context) throw new Error('Invalid node descriptor');
 
-      this.state = {
-        value: context.graph.resolve(nd),
+      // We don't yet have a way to reference the graphs on ContainerNode, so we cast to `any`
+      // and hope that dg is what we assume it is.
+      const childGraph = (context.graph.resolveInstance(nd) as any)?.dg;
+      for (const childNd of Object.values(refMap)) {
+        contextMap.set(
+          childNd as GND,
+          {
+            queueDispatch: childGraph.queueDispatch,
+            graph: childGraph,
+            nd: childNd as GND,
+            select: createSelect(childGraph, childNd as GND),
+          },
+        );
       }
-  
-      context.graph.addSideEffects(nd, (value) => {
-        this.setState({ value });
-      });
 
-      const instance = context.graph.resolveInstance(nd);
-      if (!instance) throw new Error('Resolution error');
+      return refMap;
+    }
 
-      this.queueDispatch = context.queueDispatch;
-    }
-  
-    render() {
-      return (
-        <Child
-          queueDispatch={this.queueDispatch}
-          value={this.state.value}
-        />
-      );
-    }
+    return contextMap.get(getND(nd, refs)) as NodeContext<V, R>;
+  };
+}
+
+export type ConnectProps<V, R extends RefMap<R>> = {
+  component: React.ComponentType<ConnectComponentProps<V, R>>;
+  node: NodeContext<V, R>;
+}
+
+export class Connect<V, R extends RefMap<R>> extends React.Component<ConnectProps<V, R>, { value: V }> {
+  private nodeContext: NodeContext<V, R>;
+
+  constructor(props: ConnectProps<V, R>) {
+    super(props);
+
+    this.state = {
+      value: props.node.graph.resolve(props.node.nd),
+    };
+
+    // TODO: add a `removeSideEffects` call.
+    props.node.graph.addSideEffects(props.node.nd, (value) => {
+      this.setState({ value });
+    });
+
+    const instance = props.node.graph.resolveInstance(props.node.nd);
+    if (!instance) throw new Error('Resolution error');
+
+    this.nodeContext = props.node;
   }
 
-  return <Connect />;
+  render() {
+    const Component = this.props.component;
+    return (
+      <Component node={this.nodeContext} value={this.state.value}>
+        {this.props.children}
+      </Component>
+    );
+  }
 }
