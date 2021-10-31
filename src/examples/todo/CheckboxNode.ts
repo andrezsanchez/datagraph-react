@@ -7,5 +7,5 @@ export const CheckboxNode = createStateMachineNode<CheckboxState, {}>({
   initialValue: false,
   actionHandlers: {
     ...ToggleAction.handler((state) => !state),
-  }
+  },
 });

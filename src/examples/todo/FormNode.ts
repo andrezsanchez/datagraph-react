@@ -11,6 +11,7 @@ export const FormNode = createStateMachineNode<FormState, {}>({
     list: ['what'],
     input: '1234',
   },
+
   actionHandlers: {
     ...AddEntryAction.handler((state) => {
       // If there's no input, do nothing.
@@ -32,5 +33,5 @@ export const FormNode = createStateMachineNode<FormState, {}>({
         input: action.payload,
       };
     }),
-  }
+  },
 });

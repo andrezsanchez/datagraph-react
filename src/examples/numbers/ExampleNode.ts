@@ -3,7 +3,7 @@ import { DataNode } from 'datagraph/dist/examples/refactor2/DataNode';
 import { NodeExportType, NodeExportValue } from 'datagraph/dist/examples/refactor2/NodeExport';
 import { ActionKeys } from 'datagraph/dist/examples/refactor2/Actions';
 import { AddAction } from './AddAction';
-import { ResetAction } from '../todo/ResetAction';
+import { ResetAction } from './ResetAction';
 
 type Actions = (
   & AddAction.KeyValue
