@@ -1,4 +1,4 @@
-import { createStateMachineNode } from 'datagraph/dist/examples/refactor2/StateMachineNode';
+import { createStateMachineNode } from 'datagraph';
 import { AddEntryAction, SetInputAction } from './Actions';
 
 export type FormState = {

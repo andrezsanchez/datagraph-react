@@ -1,10 +1,14 @@
+import {
+  UnknownActions,
+  UnknownProps,
+  createND,
+  createFunctionalNode,
+  createContainerNode,
+  GND,
+  ND,
+} from 'datagraph';
 import { ExampleNode } from './ExampleNode';
-import { UnknownActions } from 'datagraph/dist/examples/refactor2/Actions';
-import { UnknownProps } from 'datagraph/dist/examples/refactor2/Props';
-import { createND, GND, ND } from 'datagraph/dist/examples/refactor2/NodeDescriptor';
-import { createFunctionalNode } from 'datagraph/dist/examples/refactor2/FunctionalNode';
-import { AddAction } from 'datagraph/dist/examples/refactor2/AddAction';
-import { createContainerNode } from 'datagraph/dist/examples/refactor2/ContainerNode';
+import { AddAction } from './AddAction';
 
 const X2 = createFunctionalNode(
   (props: { value: number }): number => props.value / 2,

@@ -1,12 +1,6 @@
 import React from 'react';
 
-import { IDataGraph } from 'datagraph/dist/examples/refactor2/IDataGraph';
-import { UnknownActions } from 'datagraph/dist/examples/refactor2/Actions';
-import { UnknownRefMap } from 'datagraph/dist/examples/refactor2/RefMap';
-import { RefMap } from 'datagraph/dist/examples/refactor2/RefMap';
-import { UnknownProps } from 'datagraph/dist/examples/refactor2/Props';
-import { GND, ND } from 'datagraph/dist/examples/refactor2/NodeDescriptor';
-import { Dispatch } from 'datagraph/dist/examples/refactor2/Dispatch';
+import { GND, ND, Dispatch, UnknownProps, RefMap, UnknownRefMap, UnknownActions, IDataGraph } from 'datagraph';
 
 export interface ConnectComponentProps<V, R extends RefMap<R>> {
   value: V;

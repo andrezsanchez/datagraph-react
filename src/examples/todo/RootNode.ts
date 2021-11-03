@@ -1,8 +1,12 @@
+import {
+  UnknownActions,
+  UnknownProps,
+  createND,
+  GND,
+  ND,
+  createContainerNode,
+} from 'datagraph';
 import { CheckboxNode, CheckboxState } from './CheckboxNode';
-import { UnknownActions } from 'datagraph/dist/examples/refactor2/Actions';
-import { UnknownProps } from 'datagraph/dist/examples/refactor2/Props';
-import { createND, GND, ND } from 'datagraph/dist/examples/refactor2/NodeDescriptor';
-import { createContainerNode } from 'datagraph/dist/examples/refactor2/ContainerNode';
 import { FormNode, FormState } from './FormNode';
 
 export type RefMap = {
