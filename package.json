@@ -3,8 +3,10 @@
     "serve": "webpack serve"
   },
   "dependencies": {
+    "@types/invariant": "^2.2.35",
     "@types/react": "^17.0.21",
     "@types/react-dom": "^17.0.9",
+    "invariant": "^2.2.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },

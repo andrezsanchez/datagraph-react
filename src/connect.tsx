@@ -7,11 +7,13 @@ export interface ConnectComponentProps<V, R extends RefMap<R>> {
   node: NodeContext<V, R>
 }
 
+export type GetND<RootV, RootR extends RefMap<RootR>, V, R extends RefMap<R>> = (
+  root: ND<UnknownProps, RootV, UnknownActions, RootR>,
+  refs: <NodeV, NodeR extends RefMap<NodeR>>(nd: ND<UnknownProps, NodeV, UnknownActions, NodeR>) => RefMap<NodeR>,
+) => ND<UnknownProps, V, UnknownActions, R>
+
 export type Select<RootV, RootR extends RefMap<RootR>> = <V, R extends RefMap<R>>(
-  getND: (
-    root: ND<UnknownProps, RootV, UnknownActions, RootR>,
-    refs: <NodeV, NodeR extends RefMap<NodeR>>(nd: ND<UnknownProps, NodeV, UnknownActions, NodeR>) => RefMap<NodeR>,
-  ) => ND<UnknownProps, V, UnknownActions, R>,
+  getND: GetND<RootV, RootR, V, R>,
 ) => NodeContext<V, R>;
 
 export type NodeContext<V, R extends RefMap<R>> = {
