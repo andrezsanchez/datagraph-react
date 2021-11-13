@@ -1,14 +1,12 @@
+import { RefMap, GetND } from 'datagraph';
 import { fragmentShaderSource } from './shader.frag.glsl';
 import { vertexShaderSource } from './shader.vert.glsl';
-import { RefMap } from 'datagraph';
 import { cubeLines } from './cubeLines';
 import { Object3D } from './object3d';
 import { RefMap as RootRefMap } from './RootNode';
-import { GetND } from '../../connect';
 import { Mat4Uniform } from './Mat4Uniform';
-import { rootNodeContext } from './graph';
+import { graph } from './graph';
 import { createFragmentShader, createProgram, createVertexShader } from './shader';
-import { Matrix4 } from './Matrix4';
 import { MoveAction, MovementToggleAction, UpdateScreenSettingsAction } from './Actions';
 import { ScreenSettings } from './ScreenSettingsNode';
 import { initDom } from './initDom';
@@ -16,15 +14,15 @@ import { initDom } from './initDom';
 const domElements = initDom();
 
 function resolve<V, R extends RefMap<R>>(fn: GetND<null, RootRefMap, V, R>) {
-  const thing = rootNodeContext.select(fn);
+  const thing = graph.select(fn);
   return thing.graph.resolve(thing.nd);
 }
 
 function updateScreenSettings() {
   const rect = domElements.applicationRoot.getBoundingClientRect();
   const dpr = window.devicePixelRatio;
-  
-  const context = rootNodeContext.select((root, refs) => refs(root).screenSettings);
+
+  const context = graph.select((root, refs) => refs(root).screenSettings);
   context.queueDispatch(UpdateScreenSettingsAction.create({
     sizeCssPixels: [rect.width, rect.height],
     devicePixelRatio: dpr,
@@ -71,7 +69,7 @@ function init(gl: WebGL2RenderingContext) {
 
   gl.useProgram(shaderProgram);
   {
-    const context = rootNodeContext.select((root, refs) => refs(root).position);
+    const context = graph.select((root, refs) => refs(root).position);
 
     context.graph.addSideEffects(context.nd, (positionController) => {
       shouldRender = true;
@@ -82,7 +80,7 @@ function init(gl: WebGL2RenderingContext) {
   }
 
   {
-    const context = rootNodeContext.select((root, refs) => refs(root).screenSettings);
+    const context = graph.select((root, refs) => refs(root).screenSettings);
     context.graph.addSideEffects(context.nd, (screenSettings) => {
       shouldRender = true;
       screenSettingsDidUpdate(screenSettings);
@@ -98,7 +96,7 @@ function init(gl: WebGL2RenderingContext) {
   }
 
   {
-    const context = rootNodeContext.select((root, refs) => refs(root).cameraPose);
+    const context = graph.select((root, refs) => refs(root).cameraPose);
     context.graph.addSideEffects(context.nd, (cameraPose) => {
       uploadMat4Uniform({ name: 'view', data: cameraPose.poseInverse }, shaderProgram);
     });
@@ -108,7 +106,7 @@ function init(gl: WebGL2RenderingContext) {
   }
 
   {
-    const context = rootNodeContext.select((root, refs) => refs(root).projectionMatrix);
+    const context = graph.select((root, refs) => refs(root).projectionMatrix);
     context.graph.addSideEffects(context.nd, (projectionMatrix) => {
       uploadMat4Uniform({ name: 'projection', data: projectionMatrix }, shaderProgram);
     });
@@ -146,9 +144,9 @@ function init(gl: WebGL2RenderingContext) {
 
     requestAnimationFrame(animate);
 
-    const positionContext = rootNodeContext.select((root, refs) => refs(root).position);
+    const positionContext = graph.select((root, refs) => refs(root).position);
 
-    const n = 100;
+    const n = 1;
     for (let i = 0; i < n; i += 1) {
       positionContext.queueDispatch(MoveAction.create(cappedDelta / n));
     }
@@ -159,7 +157,7 @@ function init(gl: WebGL2RenderingContext) {
 init(domElements.gl);
 
 window.addEventListener('keydown', (event) => {
-  const positionContext = rootNodeContext.select((root, refs) => refs(root).position);
+  const positionContext = graph.select((root, refs) => refs(root).position);
   switch (event.key) {
     case 'ArrowLeft': {
       positionContext.queueDispatch(MoveAction.create(-1));
@@ -179,5 +177,5 @@ window.addEventListener('keydown', (event) => {
 window.addEventListener('resize', () => {
   updateScreenSettings();
 });
-updateScreenSettings();
 
+updateScreenSettings();

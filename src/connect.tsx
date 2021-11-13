@@ -1,77 +1,10 @@
 import React from 'react';
 
-import { GND, ND, Dispatch, UnknownProps, RefMap, UnknownRefMap, UnknownActions, IDataGraph } from 'datagraph';
+import { NodeContext, RefMap } from 'datagraph';
 
 export interface ConnectComponentProps<V, R extends RefMap<R>> {
   value: V;
   node: NodeContext<V, R>
-}
-
-export type GetND<RootV, RootR extends RefMap<RootR>, V, R extends RefMap<R>> = (
-  root: ND<UnknownProps, RootV, UnknownActions, RootR>,
-  refs: <NodeV, NodeR extends RefMap<NodeR>>(nd: ND<UnknownProps, NodeV, UnknownActions, NodeR>) => RefMap<NodeR>,
-) => ND<UnknownProps, V, UnknownActions, R>
-
-export type Select<RootV, RootR extends RefMap<RootR>> = <V, R extends RefMap<R>>(
-  getND: GetND<RootV, RootR, V, R>,
-) => NodeContext<V, R>;
-
-export type NodeContext<V, R extends RefMap<R>> = {
-  queueDispatch: Dispatch;
-  graph: IDataGraph;
-  nd: ND<UnknownProps, V, UnknownActions, UnknownRefMap>;
-  select: Select<V, R>;
-};
-
-export function createSelect<RootV, RootR extends RefMap<RootR>>(
-  graph: IDataGraph,
-  nd: ND<UnknownProps, RootV, UnknownActions, RootR>,
-) {
-  return <V, R extends RefMap<R>>(
-    getND: (
-      root: typeof nd,
-      refs: <NodeV, NodeR extends RefMap<NodeR>>(nd: ND<UnknownProps, NodeV, UnknownActions, NodeR>) => RefMap<NodeR>,
-    ) => ND<UnknownProps, V, UnknownActions, R>,
-  ): NodeContext<V, R> => {
-    const contextMap = new Map<GND, NodeContext<unknown, UnknownRefMap>>();
-
-    contextMap.set(
-      nd,
-      {
-        queueDispatch: graph.queueDispatch,
-        graph,
-        nd,
-        select: createSelect(graph, nd),
-      },
-    );
-
-    function refs<V2, T extends RefMap<T>>(nd: ND<UnknownProps, V2, UnknownActions, T>): RefMap<T> {
-      const refMap = graph.getRefMap(nd);
-      if (!refMap) throw new Error('Resolution error');
-
-      const context = contextMap.get(nd);
-      if (!context) throw new Error('Invalid node descriptor');
-
-      // We don't yet have a way to reference the graphs on ContainerNode, so we cast to `any`
-      // and hope that dg is what we assume it is.
-      const childGraph = (context.graph.resolveInstance(nd) as any)?.dg;
-      for (const childNd of Object.values(refMap)) {
-        contextMap.set(
-          childNd as GND,
-          {
-            queueDispatch: childGraph.queueDispatch,
-            graph: childGraph,
-            nd: childNd as GND,
-            select: createSelect(childGraph, childNd as GND),
-          },
-        );
-      }
-
-      return refMap;
-    }
-
-    return contextMap.get(getND(nd, refs)) as NodeContext<V, R>;
-  };
 }
 
 export type ConnectProps<V, R extends RefMap<R>> = {

@@ -42,6 +42,7 @@ export class Object3D {
 
     this.gl.bindVertexArray(null);
   }
+
   render() {
     invariant(this.shaderProgam, 'Object must have shader defined');
     this.gl.useProgram(this.shaderProgam);

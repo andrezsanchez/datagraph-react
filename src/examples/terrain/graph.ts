@@ -1,15 +1,5 @@
-import { RefMap, RootNode } from './RootNode';
-import { createND, RootDataGraph } from 'datagraph';
-import { createSelect, NodeContext } from '../../connect';
+import { RootNode } from './RootNode';
+import { createND, createGraph } from 'datagraph';
 
-export const graph = new RootDataGraph();
+export const graph = createGraph(() => createND(RootNode, {}));
 
-const root = createND(RootNode, {});
-graph.mountNodes(new Set([root]));
-
-export const rootNodeContext: NodeContext<null, RefMap> = {
-  graph,
-  nd: root,
-  select: createSelect(graph, root),
-  queueDispatch: graph.queueDispatch,
-};

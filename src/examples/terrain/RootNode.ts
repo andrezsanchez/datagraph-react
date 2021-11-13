@@ -1,37 +1,47 @@
-import { Matrix4 } from './Matrix4';
-import { ProjectionMatrixNode } from './ProjectionMatrixNode';
-import { CameraPose, CameraPoseNode } from './CameraPoseNode';
 import {
-  UnknownActions,
-  UnknownProps,
   createND,
   GND,
   ND,
+  NDFC,
   createContainerNode,
+  NodeClass,
+  RefMap as DataGraphRefMap,
+  DescriptorProps,
+  Props,
 } from 'datagraph';
-import { PositionControllerNode, PositionControllerState } from './PositionControllerNode';
-import { ScreenSettings, ScreenSettingsNode } from './ScreenSettingsNode';
+import { ScreenSettingsNode } from './ScreenSettingsNode';
+import { ProjectionMatrixNode } from './ProjectionMatrixNode';
+import { CameraPoseNode } from './CameraPoseNode';
+import { PositionControllerNode } from './PositionControllerNode';
 
 export type RefMap = {
-  position: ND<UnknownProps, PositionControllerState, UnknownActions, {}>;
-  cameraPose: ND<UnknownProps, CameraPose, UnknownActions, {}>;
-  projectionMatrix: ND<UnknownProps, Matrix4, UnknownActions, {}>;
-  screenSettings: ND<UnknownProps, ScreenSettings, UnknownActions, {}>;
+  position: NDFC<typeof PositionControllerNode>;
+  cameraPose: NDFC<typeof CameraPoseNode>;
+  projectionMatrix: NDFC<typeof ProjectionMatrixNode>;
+  screenSettings: NDFC<typeof ScreenSettingsNode>;
 }
 
-export const RootNode = createContainerNode<{}, null, RefMap>(() => {
-  const position = createND(PositionControllerNode, {});
-  const cameraPose = createND(CameraPoseNode, {});
-  const screenSettings = createND(ScreenSettingsNode, {});
-  const projectionMatrix = createND(ProjectionMatrixNode, { cameraPose, screenSettings });
+// export const RootNode = createContainerNode<{}, null, RefMap>(() => {
+export const RootNode = createContainerNode(() => {
+  const nodeSet = new Set<GND>();
+
+  function node<P extends Props<P>, V, A, R extends DataGraphRefMap<R>>(
+    Node: NodeClass<P, V, A, R>,
+    props: DescriptorProps<P>,
+  ): ND<P, V, A, R> {
+    const nd = createND(Node, props);
+    nodeSet.add(nd as GND);
+
+    return nd;
+  }
+
+  const position = node(PositionControllerNode, {});
+  const cameraPose = node(CameraPoseNode, {});
+  const screenSettings = node(ScreenSettingsNode, {});
+  const projectionMatrix = node(ProjectionMatrixNode, { cameraPose, screenSettings });
 
   return {
-    nodeSet: new Set<GND>([
-      position,
-      cameraPose,
-      screenSettings,
-      projectionMatrix,
-    ]),
+    nodeSet,
     outputNode: null,
     refs: {
       position,
