@@ -1,19 +1,19 @@
 import React from 'react';
 
-import { NodeContext, RefMap } from 'datagraph';
+import { NodeSelection, RefMap } from 'datagraph';
 
 export interface ConnectComponentProps<V, R extends RefMap<R>> {
   value: V;
-  node: NodeContext<V, R>
+  node: NodeSelection<V, R>
 }
 
 export type ConnectProps<V, R extends RefMap<R>> = {
   component: React.ComponentType<ConnectComponentProps<V, R>>;
-  node: NodeContext<V, R>;
+  node: NodeSelection<V, R>;
 }
 
 export class Connect<V, R extends RefMap<R>> extends React.Component<ConnectProps<V, R>, { value: V }> {
-  private nodeContext: NodeContext<V, R>;
+  private nodeContext: NodeSelection<V, R>;
 
   sideEffects = (value: V) => {
     this.setState({ value });
