@@ -1,7 +1,7 @@
 import { Vector3 } from './Vector3';
 import { Matrix4 } from './Matrix4';
 import { IVector3 } from './IVector3';
-import { createFunctionalNode } from 'datagraph';
+import { createFunctionalNode } from '@datagraph/dgf';
 
 export type CameraParams = {
   ground: IVector3;

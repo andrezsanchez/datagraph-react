@@ -1,8 +1,8 @@
-import { createStateMachineNode } from 'datagraph';
+import { createStateMachineNode } from '@datagraph/dgf';
 import { MovementToggleAction } from './Actions';
 
 export const MovementStateNode = createStateMachineNode<boolean, MovementToggleAction.KeyValue>({
-  initialValue: true,
+  getInitialValue: () => true,
   actionHandlers: {
     ...MovementToggleAction.handler((state) => {
       return !state;

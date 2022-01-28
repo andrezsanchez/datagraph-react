@@ -1,10 +1,10 @@
-import { createStateMachineNode } from 'datagraph';
+import { createStateMachineNode } from '@datagraph/dgf';
 import { ToggleAction } from './Actions';
 
 export type CheckboxState = boolean;
 
 export const CheckboxNode = createStateMachineNode<CheckboxState, {}>({
-  initialValue: false,
+  getInitialValue: () => false,
   actionHandlers: {
     ...ToggleAction.handler((state) => !state),
   },

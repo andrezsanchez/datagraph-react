@@ -5,7 +5,7 @@ import {
   GND,
   ND,
   createContainerNode,
-} from 'datagraph';
+} from '@datagraph/dgf';
 import { CheckboxNode, CheckboxState } from './CheckboxNode';
 import { FormNode, FormState } from './FormNode';
 

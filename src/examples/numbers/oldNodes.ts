@@ -6,7 +6,7 @@ import {
   createContainerNode,
   GND,
   ND,
-} from 'datagraph';
+} from '@datagraph/dgf';
 import { ExampleNode } from './ExampleNode';
 import { AddAction } from './AddAction';
 

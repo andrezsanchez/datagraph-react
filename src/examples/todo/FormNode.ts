@@ -1,4 +1,4 @@
-import { createStateMachineNode } from 'datagraph';
+import { createStateMachineNode } from '@datagraph/dgf';
 import { AddEntryAction, SetInputAction } from './Actions';
 
 export type FormState = {
@@ -7,10 +7,10 @@ export type FormState = {
 }
 
 export const FormNode = createStateMachineNode<FormState, {}>({
-  initialValue: {
+  getInitialValue: () => ({
     list: ['what'],
     input: '1234',
-  },
+  }),
 
   actionHandlers: {
     ...AddEntryAction.handler((state) => {

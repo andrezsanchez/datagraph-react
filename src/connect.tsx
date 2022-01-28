@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { NodeSelection, RefMap } from 'datagraph';
+import { NodeSelection, RefMap } from '@datagraph/dgf';
 
 export interface ConnectComponentProps<V, R extends RefMap<R>> {
   value: V;

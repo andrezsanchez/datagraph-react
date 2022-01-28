@@ -1,4 +1,4 @@
-import { createStateMachineNode } from 'datagraph';
+import { createStateMachineNode } from '@datagraph/dgf';
 import { MoveAction, MovementToggleAction } from './Actions';
 
 export type PositionState = [number, number, number];
@@ -20,10 +20,10 @@ function positionControllerStateEquals(a: PositionControllerState, b: PositionCo
 }
 
 export const PositionControllerNode = createStateMachineNode<PositionControllerState, MoveAction.KeyValue>({
-  initialValue: {
+  getInitialValue: () => ({
     position: [0, 0, 0],
     movementEnabled: true,
-  },
+  }),
   actionHandlers: {
     ...MoveAction.handler((state, action) => {
       if (state.movementEnabled) {

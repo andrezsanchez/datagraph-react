@@ -1,4 +1,4 @@
-import { Action, makeActionCreator, makeFnActionHandlerCreator } from "datagraph";
+import { Action, makeActionCreator, makeFnActionHandlerCreator } from "@datagraph/dgf";
 
 export namespace AddEntryAction {
   export const name = 'AddEntryAction';

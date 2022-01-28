@@ -1,4 +1,4 @@
-import { Action, makeActionCreator, makeFnActionHandlerCreator } from "datagraph/dist/examples/refactor2/Action";
+import { Action, makeActionCreator, makeFnActionHandlerCreator } from "@datagraph/dgf";
 
 export namespace AddAction {
   export const name = 'AddAction';

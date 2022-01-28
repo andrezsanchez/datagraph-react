@@ -1,7 +1,7 @@
 import { ScreenSettings } from './ScreenSettingsNode';
 import { CameraPose } from './CameraPoseNode';
 import { Matrix4 } from './Matrix4';
-import { createFunctionalNode } from 'datagraph';
+import { createFunctionalNode } from '@datagraph/dgf';
 
 function updateProjectionMatrix(
   mat4: Matrix4,

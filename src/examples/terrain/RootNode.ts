@@ -8,7 +8,7 @@ import {
   RefMap as DataGraphRefMap,
   DescriptorProps,
   Props,
-} from 'datagraph';
+} from '@datagraph/dgf';
 import { ScreenSettingsNode } from './ScreenSettingsNode';
 import { ProjectionMatrixNode } from './ProjectionMatrixNode';
 import { CameraPoseNode } from './CameraPoseNode';

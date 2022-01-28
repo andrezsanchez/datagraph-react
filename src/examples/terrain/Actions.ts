@@ -1,4 +1,4 @@
-import { Action, makeActionCreator, makeFnActionHandlerCreator } from "datagraph";
+import { Action, makeActionCreator, makeFnActionHandlerCreator } from "@datagraph/dgf";
 import { ScreenSettings } from "./ScreenSettingsNode";
 
 export namespace MoveAction {

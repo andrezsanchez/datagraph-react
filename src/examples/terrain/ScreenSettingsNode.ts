@@ -1,4 +1,4 @@
-import { createStateMachineNode } from 'datagraph';
+import { createStateMachineNode } from '@datagraph/dgf';
 import { UpdateScreenSettingsAction } from './Actions';
 
 export type ScreenSettings = {
@@ -9,10 +9,10 @@ export type ScreenSettings = {
 type Actions = UpdateScreenSettingsAction.KeyValue;
 
 export const ScreenSettingsNode = createStateMachineNode<ScreenSettings, Actions>({
-  initialValue: {
+  getInitialValue: () => ({
     sizeCssPixels: [1222, 888],
     devicePixelRatio: window.devicePixelRatio,
-  },
+  }),
 
   actionHandlers: {
     ...UpdateScreenSettingsAction.handler((_, action) => {

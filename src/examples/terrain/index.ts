@@ -1,4 +1,4 @@
-import { RefMap, GetND } from 'datagraph';
+import { RefMap, GetND } from '@datagraph/dgf';
 import { fragmentShaderSource } from './shader.frag.glsl';
 import { vertexShaderSource } from './shader.vert.glsl';
 import { cubeLines } from './cubeLines';
@@ -144,11 +144,11 @@ function init(gl: WebGL2RenderingContext) {
 
     requestAnimationFrame(animate);
 
-    const positionContext = graph.select((root, refs) => refs(root).position);
+    const positionNode = graph.select((root, refs) => refs(root).position);
 
     const n = 1;
     for (let i = 0; i < n; i += 1) {
-      positionContext.queueDispatch(MoveAction.create(cappedDelta / n));
+      positionNode.queueDispatch(MoveAction.create(cappedDelta / n));
     }
   }
   animate(0);
