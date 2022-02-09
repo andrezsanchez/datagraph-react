@@ -54,16 +54,3 @@ export function createProgram(
 
   return program;
 }
-
-export class Shader {
-  public objects: Set<Object3D> = new Set();
-  constructor(
-    public program: WebGLProgram,
-  ) {
-    this.objects = new Set();
-  }
-
-  addObject(object: Object3D) {
-    this.objects.add(object);
-  }
-}
