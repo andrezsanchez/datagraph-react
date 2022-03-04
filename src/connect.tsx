@@ -1,25 +1,25 @@
 import React from 'react';
 
-import { NodeSelection, RefMap } from '@datagraph/dgf';
+import { NodeSelection, WUnknown } from '@datagraph/dgf';
 
-export interface ConnectComponentProps<V, R extends RefMap<R>> {
-  value: V;
-  node: NodeSelection<V, R>
+export interface ConnectComponentProps<N extends WUnknown> {
+  value: N["value"];
+  node: NodeSelection<N>
 }
 
-export type ConnectProps<V, R extends RefMap<R>> = {
-  component: React.ComponentType<ConnectComponentProps<V, R>>;
-  node: NodeSelection<V, R>;
+export type ConnectProps<N extends WUnknown> = {
+  component: React.ComponentType<ConnectComponentProps<N>>;
+  node: NodeSelection<N>;
 }
 
-export class Connect<V, R extends RefMap<R>> extends React.Component<ConnectProps<V, R>, { value: V }> {
-  private nodeContext: NodeSelection<V, R>;
+export class Connect<N extends WUnknown> extends React.Component<ConnectProps<N>, { value: N["value"] }> {
+  private nodeContext: NodeSelection<N>;
 
-  sideEffects = (value: V) => {
+  sideEffects = (value: N["value"]) => {
     this.setState({ value });
   }
 
-  constructor(props: ConnectProps<V, R>) {
+  constructor(props: ConnectProps<N>) {
     super(props);
 
     this.state = {
