@@ -1,5 +1,3 @@
-import { Object3D } from './object3d';
-
 export function createShader(
   gl: WebGL2RenderingContext,
   type: number,
