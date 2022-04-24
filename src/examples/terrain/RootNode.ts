@@ -6,6 +6,8 @@ import {
   NodeClass,
   DescriptorProps,
   WUnknown,
+  NDFC,
+  NodeSelection,
 } from '@datagraph/dgf';
 import { ScreenSettingsNode } from './ScreenSettingsNode';
 import { ProjectionMatrixNode } from './ProjectionMatrixNode';
@@ -41,3 +43,5 @@ export const RootNode = createContainerNode(() => {
     },
   };
 });
+
+export type Graph = NodeSelection<NDFC<typeof RootNode>>;
