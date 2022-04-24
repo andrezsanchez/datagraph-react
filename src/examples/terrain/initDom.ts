@@ -1,4 +1,4 @@
-export function initDom() {
+export function initDom(document: Document) {
   document.body.style.margin = '0';
   document.body.style.position = 'absolute';
   document.body.style.left = '0';
