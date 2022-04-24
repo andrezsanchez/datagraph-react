@@ -1,8 +1,7 @@
 import { cubeLines } from './cubeLines';
 import { Object3D } from './object3d';
 import { ScreenSettings } from './ScreenSettingsNode';
-import { NDFC, NodeSelection } from '@datagraph/dgf';
-import { RootNode } from './RootNode';
+import { Graph } from './RootNode';
 import { Mat4Uniform } from "./Mat4Uniform";
 import { createFragmentShader, createProgram, createVertexShader } from './shader';
 import { fragmentShaderSource } from './shader.frag.glsl';
@@ -13,8 +12,6 @@ function uploadMat4Uniform(gl: WebGL2RenderingContext, uniform: Mat4Uniform, sha
   const location = gl.getUniformLocation(shader, uniform.name);
   gl.uniformMatrix4fv(location, false, new Float32Array(uniform.data.buffer));
 }
-
-type Graph = NodeSelection<NDFC<typeof RootNode>>;
 
 export function initGraphics(
   gl: WebGL2RenderingContext,
