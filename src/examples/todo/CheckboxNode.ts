@@ -4,7 +4,7 @@ import { ToggleAction } from './Actions';
 export type CheckboxState = boolean;
 
 export const CheckboxNode = createStateMachineNode<CheckboxState, {}>({
-  getInitialValue: () => false,
+  getInitialValue: () => true,
   actionHandlers: {
     ...ToggleAction.handler((state) => !state),
   },

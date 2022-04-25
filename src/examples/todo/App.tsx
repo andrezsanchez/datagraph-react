@@ -2,10 +2,12 @@ import React, { FormEventHandler, ChangeEvent } from 'react';
 import { ConnectComponentProps, Connect } from '../../connect';
 
 import { AddEntryAction, SetInputAction, ToggleAction } from './Actions';
-import { RefMap } from './RootNode';
-import { FormState } from './FormNode';
+import { FormNode } from './FormNode';
+import { NDFC } from '@datagraph/dgf';
+import { CheckboxNode } from './CheckboxNode';
+import { graph } from './graph';
 
-type FormProps = ConnectComponentProps<FormState, {}>;
+type FormProps = ConnectComponentProps<NDFC<typeof FormNode>>;
 
 class Form extends React.Component<FormProps> {
   onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +42,7 @@ class Form extends React.Component<FormProps> {
   }
 }
 
-type CheckboxProps = ConnectComponentProps<boolean, {}>;
+type CheckboxProps = ConnectComponentProps<NDFC<typeof CheckboxNode>>;
 
 class Checkbox extends React.Component<CheckboxProps> {
   onClick = () => {
@@ -58,20 +60,16 @@ class Checkbox extends React.Component<CheckboxProps> {
   }
 }
 
-type Props = ConnectComponentProps<null, RefMap>;
-
-export class App extends React.Component<Props> {
+export class App extends React.Component {
   render() {
-    const select = this.props.node.select;
-
     return (
       <div>
         <Connect
-          node={select((node, refs) => refs(node).checkbox)}
+          node={graph.select((root) => root.checkbox)}
           component={Checkbox}
         >
           <Connect
-            node={select((node, refs) => refs(node).form)}
+            node={graph.select((root) => root.form)}
             component={Form}
           />
         </Connect>

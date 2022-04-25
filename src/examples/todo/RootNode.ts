@@ -1,22 +1,13 @@
 import {
-  UnknownActions,
-  UnknownProps,
   createND,
   GND,
-  ND,
   createContainerNode,
 } from '@datagraph/dgf';
-import { CheckboxNode, CheckboxState } from './CheckboxNode';
-import { FormNode, FormState } from './FormNode';
+import { CheckboxNode } from './CheckboxNode';
+import { FormNode } from './FormNode';
 
-export type RefMap = {
-  form: ND<UnknownProps, FormState, UnknownActions, {}>;
-  checkbox: ND<UnknownProps, CheckboxState, UnknownActions, {}>;
-}
-
-export const RootNode = createContainerNode<{}, null, RefMap>(() => {
+export const RootNode = createContainerNode(() => {
   const form = createND(FormNode, { x: 5 });
-
   const checkbox = createND(CheckboxNode, {});
 
   return {

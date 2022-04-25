@@ -22,9 +22,8 @@ export class Connect<N extends WUnknown> extends React.Component<ConnectProps<N>
   constructor(props: ConnectProps<N>) {
     super(props);
 
-    this.state = {
-      value: props.node.graph.resolve(props.node.nd),
-    };
+    const value = props.node.graph.resolve(props.node.nd);
+    this.state = { value };
 
     props.node.graph.addSideEffects(props.node.nd, this.sideEffects);
 
