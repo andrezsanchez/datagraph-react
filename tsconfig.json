@@ -67,7 +67,7 @@
   "include": [
     "./types/*.d.ts",
     "src/*",
-    "src/examples/terrain/**/*.ts",
+    "src/examples/todo/**/*.ts",
   ],
   "exclude": [
     "node_modules",
