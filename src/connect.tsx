@@ -1,16 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NodeSelection, WUnknown } from '@datagraph/dgf';
 
-export interface ConnectComponentProps<N extends WUnknown> {
-  value: N["value"];
-  node: NodeSelection<N>
-}
-
-export type ConnectProps<N extends WUnknown> = {
-  component: React.ComponentType<ConnectComponentProps<N>>;
-  node: NodeSelection<N>;
-}
-
 export function useNode<N extends WUnknown>(node: NodeSelection<N>) {
   const [state, setState] = useState(() => node.graph.resolve(node.nd));
 
@@ -27,6 +17,16 @@ export function useNode<N extends WUnknown>(node: NodeSelection<N>) {
   });
 
   return state;
+}
+
+export interface ConnectComponentProps<N extends WUnknown> {
+  value: N["value"];
+  node: NodeSelection<N>
+}
+
+export type ConnectProps<N extends WUnknown> = {
+  component: React.ComponentType<ConnectComponentProps<N>>;
+  node: NodeSelection<N>;
 }
 
 export class Connect<N extends WUnknown> extends React.Component<ConnectProps<N>, { value: N["value"] }> {
