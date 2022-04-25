@@ -1,5 +1,4 @@
-import React from 'react';
-
+import React, { useEffect, useState } from 'react';
 import { NodeSelection, WUnknown } from '@datagraph/dgf';
 
 export interface ConnectComponentProps<N extends WUnknown> {
@@ -12,12 +11,30 @@ export type ConnectProps<N extends WUnknown> = {
   node: NodeSelection<N>;
 }
 
+export function useNode<N extends WUnknown>(node: NodeSelection<N>) {
+  const [state, setState] = useState(() => node.graph.resolve(node.nd));
+
+  function sideEffects(value: N["value"]) {
+    setState(value);
+  }
+
+  useEffect(() => {
+    node.graph.addSideEffects(node.nd, sideEffects);
+
+    return () => {
+      node.graph.removeSideEffects(node.nd, sideEffects);
+    };
+  });
+
+  return state;
+}
+
 export class Connect<N extends WUnknown> extends React.Component<ConnectProps<N>, { value: N["value"] }> {
   private nodeContext: NodeSelection<N>;
 
   sideEffects = (value: N["value"]) => {
     this.setState({ value });
-  }
+  };
 
   constructor(props: ConnectProps<N>) {
     super(props);

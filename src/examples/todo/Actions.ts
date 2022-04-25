@@ -22,8 +22,8 @@ export namespace SetInputAction {
   export const handler = makeFnActionHandlerCreator<KeyValue>(name);
 }
 
-export namespace ToggleAction {
-  export const name = 'ToggleAction';
+export namespace ToggleAccordianAction {
+  export const name = 'ToggleAccordianAction';
   export type Payload = void;
 
   export type Name = typeof name;

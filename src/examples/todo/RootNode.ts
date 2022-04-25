@@ -3,16 +3,16 @@ import {
   GND,
   createContainerNode,
 } from '@datagraph/dgf';
-import { CheckboxNode } from './CheckboxNode';
+import { AccordianNode } from './AccordianNode';
 import { FormNode } from './FormNode';
 
 export const RootNode = createContainerNode(() => {
   const form = createND(FormNode, { x: 5 });
-  const checkbox = createND(CheckboxNode, {});
+  const accordian = createND(AccordianNode, {});
 
   return {
-    nodeSet: new Set<GND>([form, checkbox]),
+    nodeSet: new Set<GND>([form, accordian]),
     outputNode: null,
-    refs: { form, checkbox },
+    refs: { form, accordian },
   };
 });
